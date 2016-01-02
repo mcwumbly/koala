@@ -12,6 +12,22 @@ function runApp() {
     var circle = createCircle(position.x, position.y, "#0aa");
     makeDraggable(circle);
   });
+  button.bind("mouseenter touchenter", function () {
+    this.shadowBlur = this.shadowBlur * 4;
+    canvas.redraw();
+  });
+  button.bind("mouseleave touchleave", function () {
+    this.shadowBlur = this.shadowBlur / 4;
+    canvas.redraw();
+  });
+  button.bind("mousedown touchdown", function () {
+    this.shadowBlur = this.shadowBlur / 2;
+    canvas.redraw();
+  });
+  button.bind("mouseup touchup", function () {
+    this.shadowBlur = this.shadowBlur * 2;
+    canvas.redraw();
+  });
   
   resizeCanvas(canvas);
 }
