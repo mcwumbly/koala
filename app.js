@@ -6,33 +6,67 @@ function runApp() {
     background: "#0cc"
   });
 
-
-  for (i=0; i<10; i++) {
-    var x = 80;
-    var y = 80 * (i + 1);
-    var circle = canvas.display.ellipse({
-      x: x,
-      y: y,
-      radius: 50,
-      fill: "#0aa",
-      shadow: "1 1 4 #555"
-    });
-    setOriginalCircleDimensions(circle);
-    canvas.addChild(circle);
-    circle.dragAndDrop({
-      start: function () {
-        this.zIndex = "front";
-        this.shadowBlur = this.shadowBlur * 2;
-      },
-      end: function () {
-        this.x0 = this.x / widthScaleFactor();
-        this.y0 = this.y / heightScaleFactor();
-        this.shadowBlur = this.shadowBlur / 2;
-      }
-    });
-  }
+  var button = createCircle(80, 80, "#a44");
+  button.bind("click tap", function () {
+    var position = newCirclePosition();
+    var circle = createCircle(position.x, position.y, "#0aa");
+    makeDraggable(circle);
+  });
   
   resizeCanvas(canvas);
+}
+
+function newCirclePosition() {
+  var position = {
+    x: 80,
+    y: 200
+  };
+
+  while (circleExistsAt(position.x, position.y)) {
+    position.y += 80;
+    if (position.y > NORMAL_LENGTH - 50) {
+      position.x += 80;
+      position.y = 200;
+    }
+  }
+  return position;
+}
+
+function circleExistsAt(x, y) {
+  var foundOne = false; 
+  _.forEach(canvas.children, function(child) {
+    if (child.x0 == x && child.y0 == y) {
+      foundOne = true;
+    }
+  });
+  return foundOne;
+}
+
+function createCircle(x, y, fill) {
+  var circle = canvas.display.ellipse({
+    x: x,
+    y: y,
+    radius: 50,
+    fill: fill,
+    shadow: "1 1 4 #555"
+  });
+  setOriginalCircleDimensions(circle);
+  canvas.addChild(circle);
+  return circle;
+}
+
+function makeDraggable(circle) {
+  circle.dragAndDrop({
+    start: function () {
+      this.zIndex = "front";
+      this.shadowBlur = this.shadowBlur * 2;
+    },
+    end: function () {
+      this.x0 = this.x / widthScaleFactor();
+      this.y0 = this.y / heightScaleFactor();
+      this.shadowBlur = this.shadowBlur / 2;
+    }
+  });
 }
 
 var NORMAL_LENGTH = 1000;
@@ -53,9 +87,10 @@ function setOriginalCircleDimensions(circle) {
   circle.x0 = circle.x;
   circle.y0 = circle.y;
   circle.radius0 = circle.radius;
+  scaleCircle(circle); 
 }
 
-function scaleCircle(circle, scaleFactor) {
+function scaleCircle(circle) {
   circle.x = circle.x0 * widthScaleFactor();
   circle.y = circle.y0 * heightScaleFactor();
   circle.radius = circle.radius0 * sizeScaleFactor();
