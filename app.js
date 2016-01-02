@@ -25,9 +25,8 @@ function runApp() {
         this.shadowBlur = this.shadowBlur * 2;
       },
       end: function () {
-        var scaleFactor = getScaleFactor();
-        this.x0 = this.x / scaleFactor;
-        this.y0 = this.y / scaleFactor;
+        this.x0 = this.x / widthScaleFactor();
+        this.y0 = this.y / heightScaleFactor();
         this.shadowBlur = this.shadowBlur / 2;
       }
     });
@@ -36,12 +35,18 @@ function runApp() {
   resizeCanvas(canvas);
 }
 
-function getScaleFactor() {
-  var normalizeLength = 1000;
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-  var shortSide = width < height ? width : height;
-  return shortSide / normalizeLength;
+var NORMAL_LENGTH = 1000;
+
+function widthScaleFactor() {
+  return window.innerWidth / NORMAL_LENGTH;
+}
+
+function heightScaleFactor() {
+  return window.innerHeight / NORMAL_LENGTH;
+}
+  
+function sizeScaleFactor() {
+  return Math.min(widthScaleFactor(), heightScaleFactor());
 }
 
 function setOriginalCircleDimensions(circle) {
@@ -51,15 +56,14 @@ function setOriginalCircleDimensions(circle) {
 }
 
 function scaleCircle(circle, scaleFactor) {
-  circle.x = circle.x0 * scaleFactor;
-  circle.y = circle.y0 * scaleFactor;
-  circle.radius = circle.radius0 * scaleFactor;
+  circle.x = circle.x0 * widthScaleFactor();
+  circle.y = circle.y0 * heightScaleFactor();
+  circle.radius = circle.radius0 * sizeScaleFactor();
 }
 
 function resizeCanvas(canvas) {
-  var scaleFactor = getScaleFactor();
   _.forEach(canvas.children, function(child) {
-    scaleCircle(child, scaleFactor);
+    scaleCircle(child);
   });
 
   canvas.width = window.innerWidth;
