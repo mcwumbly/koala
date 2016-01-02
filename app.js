@@ -7,22 +7,28 @@ function runApp() {
   });
 
 
-  for (i=0; i<5; i++) {
-    var x = 200 * (i + 1);
-    var y = 200 * (i + 1);
+  for (i=0; i<10; i++) {
+    var x = 80;
+    var y = 80 * (i + 1);
     var circle = canvas.display.ellipse({
       x: x,
       y: y,
-      radius: 80,
-      fill: "#0aa"
+      radius: 50,
+      fill: "#0aa",
+      shadow: "1 1 4 #555"
     });
     setOriginalCircleDimensions(circle);
     canvas.addChild(circle);
     circle.dragAndDrop({
+      start: function () {
+        this.zIndex = "front";
+        this.shadowBlur = this.shadowBlur * 2;
+      },
       end: function () {
         var scaleFactor = getScaleFactor();
         this.x0 = this.x / scaleFactor;
         this.y0 = this.y / scaleFactor;
+        this.shadowBlur = this.shadowBlur / 2;
       }
     });
   }
