@@ -6,23 +6,36 @@ function runApp() {
     background: "#0cc"
   });
 
-  var circle = canvas.display.ellipse({
-    x: 0,
-    y: 0,
-    radius: 80,
-    fill: "#0aa"
-  });
 
-  for (i=0;i<20;i++) {
-    circle = circle.clone({
-      x: circle.x + 200,
-      y: circle.y + 200,
+  for (i=0; i<5; i++) {
+    var x = 200 * (i + 1);
+    var y = 200 * (i + 1);
+    var circle = canvas.display.ellipse({
+      x: x,
+      y: y,
+      radius: 80,
+      fill: "#0aa"
     });
     setOriginalCircleDimensions(circle);
     canvas.addChild(circle);
+    circle.dragAndDrop({
+      end: function () {
+        var scaleFactor = getScaleFactor();
+        this.x0 = this.x / scaleFactor;
+        this.y0 = this.y / scaleFactor;
+      }
+    });
   }
   
   resizeCanvas(canvas);
+}
+
+function getScaleFactor() {
+  var normalizeLength = 1000;
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  var shortSide = width < height ? width : height;
+  return shortSide / normalizeLength;
 }
 
 function setOriginalCircleDimensions(circle) {
@@ -38,18 +51,13 @@ function scaleCircle(circle, scaleFactor) {
 }
 
 function resizeCanvas(canvas) {
-  var normalizeLength = 1000;
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-  var shortSide = width < height ? width : height;
-  var scaleFactor = shortSide / normalizeLength;
-
+  var scaleFactor = getScaleFactor();
   _.forEach(canvas.children, function(child) {
     scaleCircle(child, scaleFactor);
   });
 
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
 
 window.onresize = function(event) {
