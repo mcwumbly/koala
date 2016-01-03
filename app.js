@@ -95,6 +95,7 @@ function addChipBehavior(circle) {
       return;
     }
     this.fill = this.fill == "#a4a" ? "#0aa" : "#a4a";
+    $('#itemPropertiesModal').modal({backdrop: 'static'});
   });
   circle.bind("touchmove", function (e) {
     e.preventDefault();
@@ -143,3 +144,23 @@ window.onresize = function(event) {
 
 oCanvas.domReady(runApp);
 
+// modal stuff
+
+$('#itemPropertiesModal').on('show.bs.modal', function (event) {
+  var modal = $(this);
+  modal.find('#item-name').val('Name');
+  modal.find('#item-description').val('Description');
+});
+
+$('#itemPropertiesModal').on('submit',function (event) {
+  event.preventDefault(); 
+  saveProperties();
+});
+
+$('#item-save').on('click', function() {
+  saveProperties();
+});
+
+function saveProperties() {
+  $('#itemPropertiesModal').modal('hide');
+}
