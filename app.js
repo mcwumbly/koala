@@ -6,11 +6,16 @@ function runApp() {
     background: "#0cc"
   });
 
+  createButton();
+  resizeCanvas(canvas);
+}
+
+function createButton() {
   var button = createCircle(80, 80, "#a44");
   button.bind("click tap", function () {
     var position = newCirclePosition();
     var circle = createCircle(position.x, position.y, "#0aa");
-    makeDraggable(circle);
+    addChipBehavior(circle);
   });
   button.bind("mouseenter touchenter", function () {
     this.shadowBlur = this.shadowBlur * 4;
@@ -28,8 +33,6 @@ function runApp() {
     this.shadowBlur = this.shadowBlur * 2;
     canvas.redraw();
   });
-  
-  resizeCanvas(canvas);
 }
 
 function newCirclePosition() {
@@ -71,17 +74,27 @@ function createCircle(x, y, fill) {
   return circle;
 }
 
-function makeDraggable(circle) {
+function addChipBehavior(circle) {
   circle.dragAndDrop({
     start: function () {
       this.zIndex = "front";
       this.shadowBlur = this.shadowBlur * 2;
+    },
+    move: function () {
+      this.dragged = true;
     },
     end: function () {
       this.x0 = this.x / widthScaleFactor();
       this.y0 = this.y / heightScaleFactor();
       this.shadowBlur = this.shadowBlur / 2;
     }
+  });
+  circle.bind("mouseup touchend", function () {
+    if (this.dragged) {
+      this.dragged = false;
+      return;
+    }
+    this.fill = this.fill == "#a4a" ? "#0aa" : "#a4a";
   });
 }
 
