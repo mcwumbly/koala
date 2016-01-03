@@ -96,6 +96,9 @@ function addChipBehavior(circle) {
     }
     this.fill = this.fill == "#a4a" ? "#0aa" : "#a4a";
   });
+  circle.bind("touchmove", function (e) {
+    e.preventDefault();
+  });
 }
 
 var NORMAL_LENGTH = 1000;
